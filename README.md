@@ -1,118 +1,114 @@
-3DEngineCpp
-==
+# 3DEngineCpp
 
-It's like the 3D Game Engine, except in C++
+An open-source C++ 3D engine and physics foundation inspired by the educational work of TheBennyBox. The project includes OpenGL rendering, SDL2 window/input handling, Assimp model loading, and a three-shape physics layer for spheres, planes, and AABBs.
 
-##Build Dependencies##
-- [CMAKE](http://www.cmake.org/)
-- [GLEW](http://glew.sourceforge.net/)
-- [SDL2](http://www.libsdl.org/)
-- [ASSIMP](http://assimp.sourceforge.net/)
-- BUILD TOOLCHAIN (Can be any one of the following, doesn't need to be all of them)
-	- Linux
-		- make, gcc, g++ ( Install with your package manager )
-		- [CodeBlocks](http://www.codeblocks.org/)
-	- Mac OS X
-		- make, gcc, g++ ( Install with preferred package manager like [HOMEBREW](http://brew.sh/) )
-		- Xcode ( Download from Mac AppStore )
-		- [CodeBlocks](http://www.codeblocks.org/)
-	- WINDOWS
-		- [Visual Studio](http://www.visualstudio.com/)
-		- [CodeBlocks](http://www.codeblocks.org/)
+The original work is credited to Benny Bobaganoosh. See [LICENSE](LICENSE) and [NOTICE](NOTICE) before redistributing or publishing derivative work.
 
-###NOTES for Dependencies###
-On Unix/Linux/Mac you can likely install CMAKE, GLEW, SDL2 and ASSIMP with your package manager
-```shell
-# On ubuntu just run
-sudo apt-get install cmake libglew-dev libsdl2-dev libassimp-dev
+## What is included
 
-# On Mac with HomeBrew just run
+- CMake-based C++ engine build
+- OpenGL, GLEW, SDL2, and Assimp integration
+- Sphere, plane, and AABB collision detection
+- Contact normals, penetration depth, restitution impulses, and static bodies
+- RAII-owned physics objects
+- Dependency-free physics unit tests
+- Scene Foundry browser UI for composing and exporting scene manifests
+
+## Prerequisites
+
+Install CMake 3.10 or newer, a C++11-compatible compiler, GLEW, SDL2, and Assimp.
+
+Ubuntu/Debian:
+
+```sh
+sudo apt-get update
+sudo apt-get install cmake build-essential libglew-dev libsdl2-dev libassimp-dev
+```
+
+macOS with Homebrew:
+
+```sh
 brew install cmake glew sdl2 assimp
 ```
 
-##Simple Build Instructions##
-###Mac OSX/Linux/Unix###
-- Open a Terminal and run:
-```Shell
-# install dependencies
+macOS with MacPorts:
 
-./Unix-Build.sh [Build Target, Debug or Release (Optional)] [Any arguments for CMake (Optional)]
-
-#For instance, you can use the CMake argument -G "Xcode" to generate an Xcode project during build,
-#or you can use -G "CodeBlocks - Unix Makefiles" to generate a CodeBlocks Project.
-#See http://www.cmake.org/ for more details about CMake arguments
-```
-- If this fails for any reason, try using the Manual Build Instructions below.
-
-###Windows###
-- Make sure CMake is both installed and added to the system PATH.
-- Run "Windows-GenVisualStudioProject.bat" If this fails for any reason, try using the Manual Build Instructions below.
-- Go to the build folder, and open 3DEngineCpp.sln with Visual Studio 2012 or newer (For older versions of Visual Studio, use manual build instructions)
-- Right click on the 3DEngineCpp project, and select "Set as start up project"
-- Build and Run
-
-##Manual Build Instructions##
-###Linux/Unix###
-- Open a Terminal and run:
-```Shell
-# install dependencies
-cd build
-cmake ../
-make
+```sh
+sudo port install cmake glew libsdl2 assimp
 ```
 
-###Mac OSX###
-- Open a Terminal and run:
-```Shell
-# install dependencies
-cd build
-cmake ../
-make
-```
+## Build and run the engine
 
-###Windows/MinGW###
-- Make sure CMake is both installed and added to the system PATH.
-- Open a Terminal and run:
-```Shell
-# install dependencies
-# Install GLEW in %PROGRAMFILES%/GLEW or SET %GLEW_ROOT_DIR% to where GLEW is on your machine (Example: D:\PATH_TO_GLEW)
-# Install SDL2 in %PROGRAMFILES%/SDL2 or SET %SDL2_ROOT_DIR% to where SDL2 is on your machine (Example: D:\PATH_TO_SDL2)
-# Install ASSIMP in %PROGRAMFILES%/ASSIMP or SET %ASSIMP_ROOT_DIR% to where ASSIMP is on your machine (Example: D:\PATH_TO_ASSIMP)
-cd build
-# REPLACE "Visual Studio 12" with your preferred build toolchain (Maybe you want "Codeblocks - MinGW Makefiles")
-# BTW VS 10 is VS 2010, VS 11 is VS 2012 and VS 12 is VS 2013, BLAME MicroSoft for the naming! LOL! 
-cmake -G "Visual Studio 12" ../
-# open the generated SLN file (or cbp file if using CodeBlocks) and build!
-```
-- Copy the DLLs in /lib/_bin/ to /build/Debug/ and /build/Release/
-- In Visual Studio, set the Startup project to 3DEngineCpp
-- Move the res folder into the build folder
-- Run
+From the repository root:
 
-##Additional Credits##
-- [@mxaddict](https://github.com/mxaddict) for setting up the awesome CMake build system
-- Everyone who's created or contributed to issues and pull requests, which make the project better!
-
-##Unit Tests##
-Configure and build the project, then run the dependency-free physics tests:
-```Shell
+```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build --target 3DEngineCpp
+cd build
+./3DEngineCpp
+```
+
+Run from `build/` so the engine can resolve its relative `res/` asset paths.
+
+## Run tests
+
+```sh
 cmake --build build --target physics_unit_tests
 ctest --test-dir build --output-on-failure
 ```
 
-The engine and physics code retain the original Benny Bobaganoosh attribution and Apache License 2.0 terms in `LICENSE` and source headers.
-
-The physics layer uses one collider interface for spheres, planes, and AABBs. Collision results contain signed separation, contact normal, and penetration depth. Physics objects use RAII ownership, zero-mass bodies are static, and dynamic contacts are resolved with restitution impulses and positional correction.
+The tests cover vector math, sphere/sphere, sphere/plane, sphere/AABB, plane/AABB, AABB/AABB, collider dispatch, and dynamic/static body motion.
 
 ## Scene Foundry
-The browser-based scene composer lives in `tools/scene-builder`. It lets users define world settings and sphere, plane, or AABB entities, preview the scene, and download a Docker-ready preview package.
 
-Run it locally by opening `tools/scene-builder/index.html`, or serve it with Docker:
-```Shell
+Scene Foundry is a browser-based scene composer in [`tools/scene-builder`](tools/scene-builder). It lets users define gravity, timestep, ambient color, and sphere, plane, or AABB entities. It provides a live preview and downloads a runnable package containing `scene.json`, a standalone preview, Docker configuration, and instructions.
+
+Open locally:
+
+```sh
+open tools/scene-builder/index.html
+```
+
+Or serve it with Python:
+
+```sh
+cd tools/scene-builder
+python3 -m http.server 4173
+```
+
+Open <http://localhost:4173>.
+
+Run the Scene Foundry container:
+
+```sh
 cd tools/scene-builder
 docker build -t scene-foundry .
 docker run --rm -p 8080:80 scene-foundry
 ```
 
-The exported `scene.json` uses the `3DEngineCpp.scene.v1` format. It is kept separate from the legacy renderer until a native C++ scene loader is added.
+Open <http://localhost:8080>.
+
+The exported manifest uses the `3DEngineCpp.scene.v1` format. It is currently a portable scene description; native C++ scene loading is a future integration step.
+
+## Contributing
+
+Contributions are welcome. Please:
+
+1. Create a feature branch.
+2. Make focused changes with tests where practical.
+3. Run the engine build and `ctest --test-dir build --output-on-failure`.
+4. Keep existing copyright and attribution notices.
+5. Clearly mark modified files when redistributing derivative work, as required by Apache 2.0 section 4.
+6. Open a pull request describing the change and validation performed.
+
+Do not remove or obscure the original Benny Bobaganoosh/TheBennyBox attribution. New contributors may add their own attribution for their modifications, but it must remain alongside the original notices.
+
+## License
+
+This project is distributed under the [Apache License 2.0](LICENSE). It permits anyone to use, copy, modify, publish, distribute, sublicense, and sell copies of the work, subject to the license conditions. Redistributions must include the license and retain the original copyright and attribution notices.
+
+## Credits
+
+- Original engine work: Benny Bobaganoosh / TheBennyBox
+- CMake build setup: [mxaddict](https://github.com/mxaddict)
+- Additional contributors are listed in project history and may add attribution for their own modifications.
