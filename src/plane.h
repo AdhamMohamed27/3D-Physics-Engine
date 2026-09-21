@@ -3,22 +3,25 @@
 #include "math3d.h"
 #include "intersect_Data.h"
 #include "bounding_Sph.h"
+#include "collider.h"
 
-class plane
+class plane : public Collider
 {
     public:
         plane(const Vector3f& normal, float distance):
+        Collider(Collider::PLANE),
             m_normal(normal),
             m_distance(distance)
         {}
         plane Normalize() const; 
         IntersectData IntersectBoundingSphere(const BoundingSphere& other) const;
+        void transform(const Vector3f& translation);
 
         inline const Vector3f & GetNormal() const {return m_normal;}
         inline float GetDistance() const {return m_distance;}
     private:
-        const Vector3f m_normal;
-        const float m_distance;
+        Vector3f m_normal;
+        float m_distance;
 };
 
 #endif 

@@ -1,24 +1,43 @@
 #include "Physics_Engine.h"
-#include <iostream>
-#include "bounding_Sph.h"
+#include <algorithm>
 
-void PhysicsEngine::AddPhysicsObject(const PhysicsObject& object)
+void PhysicsEngine::AddPhysicsObject(std::unique_ptr<PhysicsObject> object)
 {
-    m_physicsObjects.push_back(object);
+    if (object)
+        m_physicsObjects.push_back(std::move(object));
 }
 
-void PhysicsEngine::handleCollisions()
+void PhysicsEngine::HandleCollisions()
 {
-    for(unsigned int i = 0; i < m_physicsObjects.size(); i++)
+    for (std::size_t i = 0; i < m_physicsObjects.size(); ++i)
     {
-        for(unsigned int j = i + 1; j < m_physicsObjects.size(); j++)
+        for (std::size_t j = i + 1; j < m_physicsObjects.size(); ++j)
         {
-            IntersectData data = m_physicsObjects[i].GetBoundingSphere().IntersectBoundingSphere(m_physicsObjects[j].GetBoundingSphere());
-            if(data.getDoesIntersect())
+            PhysicsObject& first = *m_physicsObjects[i];
+            PhysicsObject& second = *m_physicsObjects[j];
+            const IntersectData contact = first.GetCollider().Intersect(second.GetCollider());
+            if (!contact.getDoesIntersect())
+                continue;
+
+            const Vector3f normal = contact.GetNormal();
+            const float inverseMass = first.GetInverseMass() + second.GetInverseMass();
+            if (inverseMass == 0.0f)
+                continue;
+
+            const float velocityAlongNormal = (second.GetVelocity() - first.GetVelocity()).Dot(normal);
+            if (velocityAlongNormal < 0.0f)
             {
-                m_physicsObjects[i].setVelocity(m_physicsObjects[i].GetVelocity()*-1.0f);
-                m_physicsObjects[j].setVelocity(m_physicsObjects[j].GetVelocity()*-1.0f);
+                const float restitution = std::min(first.GetRestitution(), second.GetRestitution());
+                const float impulseMagnitude = -(1.0f + restitution) * velocityAlongNormal / inverseMass;
+                const Vector3f impulse = normal * impulseMagnitude;
+                first.ApplyImpulse(impulse * -1.0f);
+                second.ApplyImpulse(impulse);
             }
+
+            const float correctionMagnitude = contact.GetPenetrationDepth() / inverseMass * 0.8f;
+            const Vector3f correction = normal * correctionMagnitude;
+            first.Translate(correction * -first.GetInverseMass());
+            second.Translate(correction * second.GetInverseMass());
         }
     }
 }
@@ -26,9 +45,8 @@ void PhysicsEngine::handleCollisions()
 void PhysicsEngine::Simulate(float deltaTime)
 {
     
-    for(unsigned int i = 0; i < m_physicsObjects.size(); i++)
-    {
-        m_physicsObjects[i].Integrate(deltaTime);
-    }
-    
+    for (const std::unique_ptr<PhysicsObject>& object : m_physicsObjects)
+        object->Integrate(deltaTime);
+
+    HandleCollisions();
 }

@@ -13,12 +13,13 @@ class BoundingSphere : public Collider
             m_radius(radius)
         {}
 
-        IntersectData IntersectBoundingSphere( const BoundingSphere& other);
-        virtual void transform(const Vector3f& translation);
+        IntersectData IntersectBoundingSphere(const BoundingSphere& other) const;
+        void transform(const Vector3f& translation);
         inline const Vector3f & GetCenter() const {return m_center;}
-        inline float GetRaduis() const {return m_radius;}
+        inline float GetRadius() const {return m_radius;}
+        inline float GetRaduis() const {return GetRadius();}
     private:
-        const Vector3f m_center;
+        Vector3f m_center;
         const float m_radius;
 };
 

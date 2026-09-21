@@ -95,3 +95,22 @@ target_link_libraries( 3DEngineCpp
 	${ASSIMP_LIBRARIES}
 )
 
+enable_testing()
+
+add_executable(physics_unit_tests
+	${3DEngineCpp_SOURCE_DIR}/tests/physics_unit_tests.cpp
+	${3DEngineCpp_SOURCE_DIR}/src/math3d.cpp
+	${3DEngineCpp_SOURCE_DIR}/src/bounding_Sph.cpp
+	${3DEngineCpp_SOURCE_DIR}/src/aabb.cpp
+	${3DEngineCpp_SOURCE_DIR}/src/plane.cpp
+	${3DEngineCpp_SOURCE_DIR}/src/collider.cpp
+	${3DEngineCpp_SOURCE_DIR}/src/physics_object.cpp
+	${3DEngineCpp_SOURCE_DIR}/src/Physics_Engine.cpp
+)
+
+target_include_directories(physics_unit_tests PRIVATE
+	${3DEngineCpp_SOURCE_DIR}/src
+)
+
+add_test(NAME physics_unit_tests COMMAND physics_unit_tests)
+

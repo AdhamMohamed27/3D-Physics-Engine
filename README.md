@@ -92,3 +92,15 @@ cmake -G "Visual Studio 12" ../
 ##Additional Credits##
 - [@mxaddict](https://github.com/mxaddict) for setting up the awesome CMake build system
 - Everyone who's created or contributed to issues and pull requests, which make the project better!
+
+##Unit Tests##
+Configure and build the project, then run the dependency-free physics tests:
+```Shell
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build --target physics_unit_tests
+ctest --test-dir build --output-on-failure
+```
+
+The engine and physics code retain the original Benny Bobaganoosh attribution and Apache License 2.0 terms in `LICENSE` and source headers.
+
+The physics layer uses one collider interface for spheres, planes, and AABBs. Collision results contain signed separation, contact normal, and penetration depth. Physics objects use RAII ownership, zero-mass bodies are static, and dynamic contacts are resolved with restitution impulses and positional correction.
