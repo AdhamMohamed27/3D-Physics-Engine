@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scene Foundry</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Skip to workspace</a>
+  <header class="topbar">
+    <div class="brand-mark" aria-hidden="true">SF</div>
+    <div>
+      <p class="eyebrow">3D Physics Engine</p>
+      <h1>Scene Foundry</h1>
+    </div>
+    <div class="topbar-status" role="status"><span class="status-dot"></span><span id="scene-status">Draft scene</span></div>
+  </header>
+
+  <main id="workspace" class="workspace">
+    <section class="intro-band" aria-labelledby="intro-title">
+      <div>
+        <p class="eyebrow">Compose. Preview. Ship.</p>
+        <h2 id="intro-title">Build a world before you build the world.</h2>
+        <p class="intro-copy">Define the physical rules and actors of a scene, inspect the result, then download a Docker-ready preview package.</p>
+      </div>
+      <div class="intro-metric"><strong id="entity-count">0</strong><span>entities in scene</span></div>
+    </section>
+
+    <div class="builder-grid">
+      <section class="panel scene-panel" aria-labelledby="scene-settings-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">01 / World</p>
+            <h2 id="scene-settings-title">Scene settings</h2>
+          </div>
+          <button class="icon-button" id="reset-scene" type="button" title="Reset scene" aria-label="Reset scene">↺</button>
+        </div>
+        <div class="form-grid">
+          <label class="field field-wide">Scene name<input id="scene-name" type="text" value="Orbital Playground" maxlength="48"></label>
+          <label class="field">Gravity Y<input id="gravity-y" type="number" value="-9.81" step="0.01"></label>
+          <label class="field">Fixed timestep<input id="timestep" type="number" value="0.0166667" step="0.000001" min="0.001"></label>
+          <label class="field field-wide">Ambient color<input id="ambient-color" type="color" value="#101820"></label>
+        </div>
+      </section>
+
+      <section class="panel entity-panel" aria-labelledby="entities-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">02 / Actors</p>
+            <h2 id="entities-title">Scene entities</h2>
+          </div>
+          <button class="button button-dark" id="add-entity" type="button"><span aria-hidden="true">+</span> Add entity</button>
+        </div>
+        <div id="entity-list" class="entity-list" aria-live="polite"></div>
+        <div id="empty-state" class="empty-state">
+          <span class="empty-icon" aria-hidden="true">◇</span>
+          <p>No actors yet</p>
+          <button class="button button-light" id="add-first-entity" type="button">Add first entity</button>
+        </div>
+      </section>
+
+      <aside class="preview-column" aria-label="Scene preview and export">
+        <section class="preview-shell">
+          <div class="preview-toolbar"><span>LIVE PREVIEW</span><span id="preview-size">800 × 500</span></div>
+          <canvas id="scene-preview" width="800" height="500" aria-label="Top-down scene preview"></canvas>
+          <div class="preview-legend"><span><i class="legend-dot sphere"></i>Sphere</span><span><i class="legend-dot box"></i>AABB</span><span><i class="legend-dot plane"></i>Plane</span></div>
+        </section>
+        <section class="panel export-panel" aria-labelledby="export-title">
+          <p class="eyebrow">03 / Export</p>
+          <h2 id="export-title">Take it with you</h2>
+          <p class="export-copy">Your download includes the scene manifest, a browser preview, Docker configuration, and run instructions.</p>
+          <button class="button button-accent button-full" id="download-package" type="button"><span aria-hidden="true">↓</span> Download runnable package</button>
+          <button class="text-button" id="download-json" type="button">Download scene.json only</button>
+          <p class="download-note" id="download-note" role="status"></p>
+        </section>
+      </aside>
+    </div>
+  </main>
+  <footer class="footer"><span>Scene Foundry</span><span>Built for the 3DEngineCpp workflow</span></footer>
+  <script src="app.js"></script>
+</body>
+</html>

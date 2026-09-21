@@ -104,3 +104,15 @@ ctest --test-dir build --output-on-failure
 The engine and physics code retain the original Benny Bobaganoosh attribution and Apache License 2.0 terms in `LICENSE` and source headers.
 
 The physics layer uses one collider interface for spheres, planes, and AABBs. Collision results contain signed separation, contact normal, and penetration depth. Physics objects use RAII ownership, zero-mass bodies are static, and dynamic contacts are resolved with restitution impulses and positional correction.
+
+## Scene Foundry
+The browser-based scene composer lives in `tools/scene-builder`. It lets users define world settings and sphere, plane, or AABB entities, preview the scene, and download a Docker-ready preview package.
+
+Run it locally by opening `tools/scene-builder/index.html`, or serve it with Docker:
+```Shell
+cd tools/scene-builder
+docker build -t scene-foundry .
+docker run --rm -p 8080:80 scene-foundry
+```
+
+The exported `scene.json` uses the `3DEngineCpp.scene.v1` format. It is kept separate from the legacy renderer until a native C++ scene loader is added.
